@@ -93,6 +93,10 @@ interpolatedDF = (
 
 # COMMAND ----------
 
+display(interpolatedDF)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC #### Step 2: Create a DataFrame of Updates
@@ -109,6 +113,17 @@ updatesDF = (
           col("p_device_id"))
 )
 
+
+# COMMAND ----------
+
+(interpolatedDF
+  .where(col("heartrate") < 0)
+  .display()
+)
+
+# COMMAND ----------
+
+display(updatesDF)
 
 # COMMAND ----------
 
@@ -285,6 +300,16 @@ insert = {
 # COMMAND ----------
 
 spark.read.table("health_tracker_processed").count()
+
+# COMMAND ----------
+
+(spark.read
+#  .option("versionAsOf", 1)
+ .format("delta")
+ .load(health_tracker + "processed")
+ .where(col("heartrate") < 0)
+ .display()
+)
 
 # COMMAND ----------
 

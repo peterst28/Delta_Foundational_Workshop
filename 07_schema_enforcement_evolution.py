@@ -89,6 +89,11 @@ health_tracker_data_2020_3_df = (
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC select from_unixtime(time)
+
+# COMMAND ----------
+
 from pyspark.sql.functions import col, from_unixtime
 def process_health_tracker_data(dataframe):
     return (
@@ -98,10 +103,15 @@ def process_health_tracker_data(dataframe):
          from_unixtime("time").cast("timestamp").alias("time"),
          "heartrate",
          "name",
-         col("device_id").cast("integer").alias("p_device_id")
+         col("device_id").cast("integer").alias("p_device_id"),
+         "device_type"
        )
      )
 processedDF = process_health_tracker_data(health_tracker_data_2020_3_df)
+
+# COMMAND ----------
+
+display(processedDF)
 
 # COMMAND ----------
 
@@ -124,6 +134,11 @@ try:
 except AnalysisException as error:
   print("Analysis Exception:")
   print(error)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC ALTER TABLE add column
 
 # COMMAND ----------
 
@@ -155,6 +170,11 @@ except AnalysisException as error:
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC ALTER TABLE ADD COLUMN ...
+
+# COMMAND ----------
+
 # ANSWER
 (processedDF.write
  .mode("append")
@@ -162,6 +182,20 @@ except AnalysisException as error:
  .format("delta")
  .save(health_tracker + "processed"))
 
+
+# COMMAND ----------
+
+(spark.read
+ .format("delta")
+#  .option("versionAsOf", 1)
+ .load(health_tracker + "processed")).printSchema()
+
+# COMMAND ----------
+
+(spark.read
+ .format("delta")
+ .option("versionAsOf", 1)
+ .load(health_tracker + "processed")).printSchema()
 
 # COMMAND ----------
 

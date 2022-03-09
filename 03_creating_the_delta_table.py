@@ -144,6 +144,23 @@ LOCATION "{health_tracker}/processed"
 
 # COMMAND ----------
 
+# MAGIC %fs ls /dbacademy/peter_stern/delta-lake-hands-on/health-tracker/processed
+
+# COMMAND ----------
+
+# MAGIC %fs ls /dbacademy/peter_stern/delta-lake-hands-on/health-tracker/processed/_delta_log
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC describe history health_tracker_processed
+
+# COMMAND ----------
+
+spark.read.format('json').load('/dbacademy/peter_stern/delta-lake-hands-on/health-tracker/processed/_delta_log/00000000000000000001.json').display()
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC #### Step 4: Count the Records in the health_tracker_processed table
@@ -154,6 +171,10 @@ LOCATION "{health_tracker}/processed"
 
 health_tracker_processed = spark.read.table("health_tracker_processed")
 health_tracker_processed.count()
+
+# COMMAND ----------
+
+# MAGIC %fs ls /dbacademy/peter_stern/delta-lake-hands-on/health-tracker/processed
 
 # COMMAND ----------
 
@@ -206,6 +227,48 @@ health_tracker_gold_user_analytics = (
  .format("delta")
  .mode("overwrite")
  .save(health_tracker + "gold/health_tracker_user_analytics"))
+
+# COMMAND ----------
+
+health_tracker + "gold/health_tracker_user_analytics"
+
+# COMMAND ----------
+
+# MAGIC %fs ls /dbacademy/peter_stern/delta-lake-hands-on/health-tracker/gold/health_tracker_user_analytics
+
+# COMMAND ----------
+
+spark.read.format('delta').load(health_tracker + "gold/health_tracker_user_analytics")
+
+# COMMAND ----------
+
+spark.sql(f"""
+DROP TABLE IF EXISTS health_tracker_user_analytics
+""")
+
+spark.sql(f"""
+CREATE TABLE health_tracker_user_analytics
+USING DELTA
+LOCATION "{health_tracker}/gold/health_tracker_user_analytics"
+""")
+
+# COMMAND ----------
+
+spark.read.table('health_tracker_user_analytics')
+
+# COMMAND ----------
+
+spark.read.table('health_tracker_user_analytics')
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from health_tracker_user_analytics
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from health_tracker_user_analytics
 
 # COMMAND ----------
 

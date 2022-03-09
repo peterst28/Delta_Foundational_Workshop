@@ -40,10 +40,30 @@
 
 # COMMAND ----------
 
+
+from pyspark.sql.functions import *
+spark.read.format("delta").load(health_tracker + "processed").where(col("p_device_id" == 4))
+
+# COMMAND ----------
+
+spark.table('dbacademy_peter_stern.health_tracker_processed').display()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from dbacademy_peter_stern.health_tracker_processed where p_device_id = 4
+
+# COMMAND ----------
+
 from delta.tables import DeltaTable
 
 processedDeltaTable = DeltaTable.forPath(spark, health_tracker + "processed")
 processedDeltaTable.delete("p_device_id = 4")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from dbacademy_peter_stern.health_tracker_processed where p_device_id = 4
 
 # COMMAND ----------
 
@@ -147,6 +167,16 @@ display(
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC RESTORE table to version as of 1
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC update set name = 'null' where p_device_id = 4
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC ## Maintaining Compliance with a Vacuum Operation
@@ -242,6 +272,11 @@ display(
   .where("p_device_id = 4")
 )
 
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC describe history dbacademy_peter_stern.health_tracker_user_analytics
 
 # COMMAND ----------
 

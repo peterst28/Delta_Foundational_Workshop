@@ -237,6 +237,15 @@ processedDF = process_health_tracker_data(health_tracker_data_2020_1_df)
 
 # COMMAND ----------
 
+
+health_tracker + "processed"
+
+# COMMAND ----------
+
+# MAGIC %fs ls /dbacademy/peter_stern/delta-lake-hands-on/health-tracker/processed/p_device_id=0/
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC #### Step 4: Register the Table in the Metastore
@@ -268,6 +277,11 @@ LOCATION "{health_tracker}/processed"
 # MAGIC Spark SQL does not automatically discover the partitions and register them in the Metastore.
 # MAGIC 
 # MAGIC Note that the count does not return results.
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from health_tracker_processed
 
 # COMMAND ----------
 
@@ -303,6 +317,11 @@ spark.sql("MSCK REPAIR TABLE health_tracker_processed")
 # ANSWER
 health_tracker_processed.count()
 
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from health_tracker_processed
 
 # COMMAND ----------
 
